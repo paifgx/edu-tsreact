@@ -1,16 +1,15 @@
-# Task sheets
+# Task sheets (Incident Dashboard)
 
-These task sheets walk you step by step through building the Incident Dashboard.
+These sheets walk you through building the Incident Dashboard step by step.
 
-Important guidelines:
+**Important:**
 
-- The sheets define direction, scope, and acceptance criteria.
-- They do **not** provide a reference solution.
-- Hints are intentionally brief.
-- Work in the given order.
-- When a sheet says “optional,” it really is optional.
+- Sheets define direction, scope, and acceptance criteria — not a reference solution.
+- Hints stay intentionally short.
+- Follow the order below unless your instructor agrees otherwise.
+- “Optional” really is optional — but it is often where faster participants can go deeper.
 
-## Recommended order
+## Order (core path)
 
 1. [00-start-and-orientation.md](./00-start-and-orientation.md)
 2. [01-incident-card-and-list.md](./01-incident-card-and-list.md)
@@ -22,27 +21,47 @@ Important guidelines:
 8. [07-use-incidents-hook.md](./07-use-incidents-hook.md)
 9. [08-capstone-filter-assignment-persistence.md](./08-capstone-filter-assignment-persistence.md)
 
-## Fit in the course schedule
+## Deep dives (capacity permitting)
 
-- Before sheet 01 comes the shared bootstrap and fundamentals live coding.
-- Between sheet 03 and sheet 04 comes the shared refactoring of status and severity to union types with badges.
-- Between sheet 07 and sheet 08 comes the shared Error Boundary live coding.
-- The first JavaScript kata from the course is intentionally **not** part of this project, because it happens outside the React app code.
+10. [09-testing-react-testing-library.md](./09-testing-react-testing-library.md)
+11. [10-accessibility-and-ux-polish.md](./10-accessibility-and-ux-polish.md)
+12. [11-performance-and-url-state.md](./11-performance-and-url-state.md)
 
-## How to work
+## Three training days — suggested mapping
 
-- Work in small, clear steps.
-- Keep the code runnable at all times.
-- Build only what the sheet actually asks for.
-- Use the existing types and data instead of inventing parallel structures.
+| Day | Focus | Core sheets | Trainer notes |
+|-----|--------|-------------|---------------|
+| **Day 1** | Components, local state, props, first interactions | 00 → 01 → 02 | Allow time for orientation and experimenting with JSX/CSS; sheet 02 may run into the afternoon. |
+| **Day 2** | Async, routing, forms, context | 03 → 04 → 05 → (start 06) | Introduce the mock API in parallel; shared refactoring with union types / badges happens outside these sheets (see below). |
+| **Day 3** | Architecture (hooks), capstone, quality | finish 06 → 07 → 08 → optional 09–11 | Error Boundary is often a shared live session; point faster groups at sheets 09–11. |
+
+### Alignment with shared live sessions
+
+- Before sheet **01**: shared bootstrap and fundamentals on project structure.
+- Between sheet **03** and **04**: shared refactor of status/severity to union types with badges (not part of the individual sheets).
+- Between sheet **07** and **08**: shared Error Boundary topic (optional complement to the sheets).
+- The first **JavaScript kata** from the course is **not** part of this project.
+
+## Working guidelines
+
+- Work in small, clear steps; commit or save progress often.
+- Keep the app **runnable** at all times (even when features are still minimal).
+- Build only what the sheet asks — avoid “cleaning up” the whole repo on the side.
+- Use existing types and data from `src/data/`; do not invent parallel models.
 - Avoid `any`.
-- If something can be derived, do not store it as its own state immediately.
+- If a value can be **derived**, it does not have to live in its own state immediately.
 
-## What is intentionally prepared?
+## What is provided for you?
 
-- The React and TypeScript scaffold
-- Seed data in `src/data/`
-- The local mock API via `npm run dev:api`
-- Placeholder files in `src/components/`, `src/hooks/`, `src/context/`, and `src/pages/`
+- React and TypeScript scaffold
+- Seed data under `src/data/`
+- Local mock API (`npm run dev:api`)
+- Placeholders under `src/components/`, `src/hooks/`, `src/context/`, `src/pages/`
 
-Everything else should be implemented by you, step by step.
+Everything else is for you to implement during the course.
+
+## Different paces in the room
+
+- **Core:** the “Core (required)” section on each sheet.
+- **Stretch:** explicitly marked; for anyone who moves ahead comfortably.
+- **Expert / playground:** open experiments and reflection prompts, often at the end of a sheet — good for self-paced work or pair programming (navigator focuses on these parts).

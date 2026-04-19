@@ -80,5 +80,5 @@ The project already includes:
 
 Step-by-step implementation lives under `tasks/`.
 
-- Entry point and order: [`tasks/README.md`](./tasks/README.md)
-- The sheets intentionally avoid spelling out solutions and build on each other.
+- Entry point, **three-day schedule**, core path 00–08, and optional deep dives 09–11: [`tasks/README.md`](./tasks/README.md)
+- The sheets intentionally avoid spelling out solutions and build on each other; each sheet includes **Core / Stretch / Expert** tiers for mixed-speed groups.

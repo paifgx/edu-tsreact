@@ -1,69 +1,105 @@
 # Task sheet 08 — Capstone: filter, assignment, persistence
 
-## Goal
+## Learning goals
 
-Combine the pieces built so far into a small, coherent feature set that feels like real product progress.
+- Combine multiple filters with AND — correct edge cases (empty means “no extra restriction”).
+- Change assignment and stay consistent between **list** and **detail**.
+- Use `localStorage` deliberately — do not persist the entire world.
 
 ## Starting point
 
 - `useIncidents` exists.
-- `useLocalStorage` is available.
-- Routing, detail page, and settings work.
+- `useLocalStorage` is available (project helper hook — use it or implement persistence consistently yourself).
+- Routing, detail, settings work.
 
-## Approach for this sheet
+---
 
-- Work in three clear stages.
-- Do **not** start with stage 3.
-- Only move on when a stage works reliably.
+## Approach (required order)
+
+Work in **three stages**. Do **not** start with stage 3.
+Only move on when a stage works reliably.
+
+---
 
 ## Stage 1 — Multi-filter on `/incidents`
 
-- Extend the list view with several filters at once.
-- Required:
-  - status as multi-select
-  - severity as multi-select
-  - assignee as single select
-- All active filters must be combined with AND.
+### Core (required)
+
+- Extend the list with several filters at once:
+  - **status**: multi-select (multi `<select>` or checkbox group)
+  - **severity**: multi-select
+  - **assignee**: single select (include “unassigned” / “all” — pick one model and stay consistent)
+- Combine active filters with **AND**.
+- Empty multi-selections mean **no** extra restriction for that dimension (not “match nothing”).
 
 ### Done when …
 
-- each filter type works on its own
-- multiple filters work together
-- empty filters do not incorrectly narrow the dataset
+- each filter works alone;
+- combinations are correct;
+- empty filters do not incorrectly narrow the dataset.
+
+### Stretch
+
+- Clear filter UI with labels and an “active filters” summary (chips).
+- Performance: `useMemo` for filtered data only if you have a concrete reason.
+
+---
 
 ## Stage 2 — Assignment on the detail page
 
-- On `/incidents/:id`, add a way to change the assignee.
-- The change should also show up in the list view.
-- Think clearly about **where** this change lives:
-  - local UI state
-  - an overlay structure
-  - or another deliberate choice
+### Core (required)
+
+- On `/incidents/:id`, change assignee (dropdown or similar).
+- The change appears in the **list** again (shared source: lifted state, context, or optimistic list update — **decide deliberately**).
+- “Unassigned” remains possible.
 
 ### Done when …
 
-- an incident can be reassigned on the detail page
-- the new assignment is visible in the list
-- an “unassigned” state remains possible
+- reassignment is visible without reloading the whole app;
+- list and detail do not contradict each other.
+
+### Stretch
+
+- Use `PATCH /api/incidents/:id` where appropriate — or document why you only update UI state locally.
+
+---
 
 ## Stage 3 — Persistence with localStorage
 
-- Persist active filters across reloads.
-- Also persist assignments you make.
-- Store only what truly belongs to the local UI.
+### Core (required)
+
+- Restore active filters across reload.
+- Restore assignment changes across reload.
+- Store only what truly belongs to **local UI** — not full server payloads unless necessary.
 
 ### Done when …
 
-- a reload restores filters
-- a reload restores assignments
-- the app remains usable afterward
+- reload restores filters;
+- reload restores assignments;
+- the app stays usable afterward (no uncontrolled zombie data).
+
+### Stretch
+
+- Migration: if you change the persisted shape, handle old keys safely or reset.
+
+---
+
+## Expert playground
+
+- **URL sync** for filters (`?status=open,investigating`): shareable links — no backend change required.
+- Write a short **manual test checklist**: 10 steps to “break and recover” the UI.
+
+### Reflection
+
+- What happens when server data changes but your persisted assignments reference stale ids?
+
+---
 
 ## Notes
 
-- Do not persist the entire incident list if only filters and local assignments are needed.
-- If persistence gets stuck, step back and verify stages 1 and 2 first.
-- Styling is secondary in this sheet. Behavior and data flow come first.
+- Styling is secondary — behavior and data flow first.
+- If persistence misbehaves, re-verify stages 1 and 2 in isolation.
 
 ## Optional
 
-- If you finish early, consider URL-based filters. That is not required for this sheet.
+- URL-based filters (if not Expert stretch).
