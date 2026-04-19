@@ -1,0 +1,11 @@
+node_modules
+dist
+
+# Accidental tsc emit next to vite.config.ts (source of truth is vite.config.ts only)
+vite.config.js
+vite.config.d.ts
+*.tsbuildinfo
+.DS_Store
+.idea
+.vscode
+

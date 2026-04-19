@@ -1,0 +1,27 @@
+[
+  {
+    "id": "u1",
+    "name": "Alex Kim",
+    "email": "alex.kim@example.com",
+    "team": "platform"
+  },
+  {
+    "id": "u2",
+    "name": "Priya Nair",
+    "email": "priya.nair@example.com",
+    "team": "backend"
+  },
+  {
+    "id": "u3",
+    "name": "Jonas Weber",
+    "email": "jonas.weber@example.com",
+    "team": "frontend"
+  },
+  {
+    "id": "u4",
+    "name": "Mara Ortiz",
+    "email": "mara.ortiz@example.com",
+    "team": "security"
+  }
+]
+

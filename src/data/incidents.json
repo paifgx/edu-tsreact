@@ -1,0 +1,153 @@
+[
+  {
+    "id": "inc-1001",
+    "title": "Primary database connection spikes",
+    "description": "Latency jumped after the nightly analytics import and user sessions began to queue.",
+    "severity": "critical",
+    "status": "investigating",
+    "assignee": {
+      "id": "u2",
+      "name": "Priya Nair",
+      "email": "priya.nair@example.com",
+      "team": "backend"
+    },
+    "createdAt": "2026-04-14T08:15:00.000Z",
+    "updatedAt": "2026-04-14T08:32:00.000Z",
+    "tags": ["database", "latency", "nightly-job"]
+  },
+  {
+    "id": "inc-1002",
+    "title": "Webhook retries flood the queue",
+    "description": "Partner retries increased 6x and our worker queue is processing duplicates.",
+    "severity": "high",
+    "status": "open",
+    "assignee": {
+      "id": "u1",
+      "name": "Alex Kim",
+      "email": "alex.kim@example.com",
+      "team": "platform"
+    },
+    "createdAt": "2026-04-14T09:02:00.000Z",
+    "updatedAt": "2026-04-14T09:02:00.000Z",
+    "tags": ["queue", "webhooks"]
+  },
+  {
+    "id": "inc-1003",
+    "title": "Search autocomplete renders stale results",
+    "description": "Fast typists see older results because a previous request resolves after the newer one.",
+    "severity": "medium",
+    "status": "resolved",
+    "assignee": {
+      "id": "u3",
+      "name": "Jonas Weber",
+      "email": "jonas.weber@example.com",
+      "team": "frontend"
+    },
+    "createdAt": "2026-04-13T13:40:00.000Z",
+    "updatedAt": "2026-04-13T14:11:00.000Z",
+    "tags": ["search", "race-condition", "ui"]
+  },
+  {
+    "id": "inc-1004",
+    "title": "Expired certificate warning for staging",
+    "description": "Monitoring flagged the staging edge certificate with less than 72 hours remaining.",
+    "severity": "low",
+    "status": "closed",
+    "assignee": {
+      "id": "u4",
+      "name": "Mara Ortiz",
+      "email": "mara.ortiz@example.com",
+      "team": "security"
+    },
+    "createdAt": "2026-04-12T07:18:00.000Z",
+    "updatedAt": "2026-04-12T10:01:00.000Z",
+    "tags": ["tls", "staging"]
+  },
+  {
+    "id": "inc-1005",
+    "title": "CSV export omits rows with empty assignee",
+    "description": "Rows without an assignee are filtered out by accident during export generation.",
+    "severity": "medium",
+    "status": "open",
+    "assignee": null,
+    "createdAt": "2026-04-11T11:22:00.000Z",
+    "updatedAt": "2026-04-11T11:22:00.000Z",
+    "tags": ["export", "nullability"]
+  },
+  {
+    "id": "inc-1006",
+    "title": "Feature flag mismatch between UI and API",
+    "description": "The frontend sees the incident-assignment feature as enabled, but the API still rejects writes.",
+    "severity": "high",
+    "status": "investigating",
+    "assignee": {
+      "id": "u1",
+      "name": "Alex Kim",
+      "email": "alex.kim@example.com",
+      "team": "platform"
+    },
+    "createdAt": "2026-04-10T15:10:00.000Z",
+    "updatedAt": "2026-04-10T15:47:00.000Z",
+    "tags": ["feature-flags", "api"]
+  },
+  {
+    "id": "inc-1007",
+    "title": "Audit trail shows wrong actor name",
+    "description": "Cached profile data keeps the previous display name after a user update.",
+    "severity": "medium",
+    "status": "resolved",
+    "assignee": {
+      "id": "u4",
+      "name": "Mara Ortiz",
+      "email": "mara.ortiz@example.com",
+      "team": "security"
+    },
+    "createdAt": "2026-04-09T09:45:00.000Z",
+    "updatedAt": "2026-04-09T10:08:00.000Z",
+    "tags": ["cache", "profiles", "audit"]
+  },
+  {
+    "id": "inc-1008",
+    "title": "Mobile layout clips the severity filter",
+    "description": "The filter bar wraps badly below 420px and hides the select control under the header.",
+    "severity": "low",
+    "status": "open",
+    "assignee": {
+      "id": "u3",
+      "name": "Jonas Weber",
+      "email": "jonas.weber@example.com",
+      "team": "frontend"
+    },
+    "createdAt": "2026-04-08T17:25:00.000Z",
+    "updatedAt": "2026-04-08T17:25:00.000Z",
+    "tags": ["responsive", "layout"]
+  },
+  {
+    "id": "inc-1009",
+    "title": "Background sync creates duplicate incidents",
+    "description": "A missing idempotency check allows the sync worker to insert the same incident twice.",
+    "severity": "critical",
+    "status": "open",
+    "assignee": {
+      "id": "u2",
+      "name": "Priya Nair",
+      "email": "priya.nair@example.com",
+      "team": "backend"
+    },
+    "createdAt": "2026-04-07T06:50:00.000Z",
+    "updatedAt": "2026-04-07T06:50:00.000Z",
+    "tags": ["sync", "idempotency"]
+  },
+  {
+    "id": "inc-1010",
+    "title": "Auth timeout modal never resets",
+    "description": "Once shown, the timeout modal survives navigation and blocks the entire route tree.",
+    "severity": "high",
+    "status": "closed",
+    "assignee": null,
+    "createdAt": "2026-04-06T19:14:00.000Z",
+    "updatedAt": "2026-04-06T19:48:00.000Z",
+    "tags": ["auth", "modal", "routing"]
+  }
+]
+

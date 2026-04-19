@@ -1,0 +1,220 @@
+:root {
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --surface: #ffffff;
+  --stroke: #e2e8f0;
+  --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --ink: #0f172a;
+  --muted: #475569;
+  --brand: #0f766e;
+  --brand-strong: #115e59;
+  --critical: #b42318;
+  --high: #c2410c;
+  --medium: #0369a1;
+  --low: #15803d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'SFMono-Regular', monospace;
+  font-size: 0.92em;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-shell {
+  width: min(820px, calc(100vw - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 3rem;
+}
+
+.page-header,
+.panel,
+.incident-card,
+.placeholder-card {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.page-header {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1,
+.panel h2,
+.panel h3 {
+  margin: 0;
+}
+
+.eyebrow,
+.page-header__eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.page-header__subtitle,
+.panel p,
+.placeholder-card p {
+  margin: 0.65rem 0 0;
+  color: var(--muted);
+}
+
+.panel {
+  padding: 1.5rem;
+}
+
+.helper-list {
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.helper-list li + li {
+  margin-top: 0.45rem;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.control__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.control__input {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  padding: 0.7rem 0.85rem;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.incident-list {
+  display: grid;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.incident-card,
+.placeholder-card {
+  padding: 1.25rem;
+}
+
+.incident-card h3,
+.placeholder-card h3 {
+  margin: 0 0 0.75rem;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: rgba(15, 23, 42, 0.06);
+}
+
+.badge--critical {
+  color: var(--critical);
+  background: rgba(180, 35, 24, 0.12);
+}
+
+.badge--high {
+  color: var(--high);
+  background: rgba(194, 65, 12, 0.12);
+}
+
+.badge--medium {
+  color: var(--medium);
+  background: rgba(3, 105, 161, 0.12);
+}
+
+.badge--low {
+  color: var(--low);
+  background: rgba(21, 128, 61, 0.12);
+}
+
+.badge--open,
+.badge--investigating,
+.badge--resolved,
+.badge--closed {
+  color: var(--brand-strong);
+  background: rgba(15, 118, 110, 0.1);
+}
+
+.empty-state {
+  padding: 1rem 0;
+  color: var(--muted);
+}
+
+.todo-note {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(15, 118, 110, 0.08);
+  color: var(--brand-strong);
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    width: min(100vw - 1rem, 1080px);
+    padding-top: 1rem;
+  }
+
+  .page-header,
+  .panel,
+  .incident-card,
+  .placeholder-card {
+    border-radius: 14px;
+  }
+}
