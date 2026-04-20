@@ -8,4 +8,4 @@ vite.config.d.ts
 .DS_Store
 .idea
 .vscode
-
+.vs
