@@ -128,6 +128,51 @@ code {
   background: rgba(255, 255, 255, 0.92);
 }
 
+.filters {
+  margin-bottom: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.filters__controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.filters__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.filters__count {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.filters__clear {
+  border: 1px solid var(--stroke);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 12px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+}
+
+.filters__clear:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .filters__controls {
+    grid-template-columns: 1fr;
+  }
+}
+
 .incident-list {
   display: grid;
   gap: 1rem;
