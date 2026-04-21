@@ -1,47 +1,42 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Incident } from '../data/incidents';
 import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 
-export interface UseIncidentsResult {
-  incidents: Incident[];
+export interface UseIncidentByIdResult {
+  incident: Incident | null;
   isLoading: boolean;
   error: string | null;
-  refetch: () => void;
 }
 
-/** Loads incidents from `/api/incidents`. */
-export function useIncidents(): UseIncidentsResult {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
+/** Loads a single incident from `/api/incidents/:id`. */
+export function useIncidentById(id: string): UseIncidentByIdResult {
+  const [incident, setIncident] = useState<Incident | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [refetchKey, setRefetchKey] = useState(0);
-
-  const refetch = useCallback(() => {
-    setRefetchKey((key) => key + 1);
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     setIsLoading(true);
     setError(null);
+    setIncident(null);
 
     async function load() {
       try {
-        const response = await fetch('/api/incidents');
+        const response = await fetch(`/api/incidents/${id}`);
 
         if (!response.ok) {
           const message = await readHttpErrorMessage(response);
           throw new Error(message);
         }
 
-        const data: Incident[] = await response.json();
+        const data: Incident = await response.json();
         if (cancelled) return;
-        setIncidents(data);
+        setIncident(data);
       } catch (err) {
         if (cancelled) return;
         const message =
-          err instanceof Error ? err.message : 'Unknown error while loading incidents.';
+          err instanceof Error ? err.message : 'Unknown error while loading incident.';
         setError(message);
       } finally {
         if (!cancelled) {
@@ -55,7 +50,7 @@ export function useIncidents(): UseIncidentsResult {
     return () => {
       cancelled = true;
     };
-  }, [refetchKey]);
+  }, [id]);
 
-  return { incidents, isLoading, error, refetch };
+  return { incident, isLoading, error };
 }

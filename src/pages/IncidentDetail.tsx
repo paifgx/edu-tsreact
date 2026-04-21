@@ -1,5 +1,7 @@
+import { useParams } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
-import { useIncidents } from '../hooks/useIncidents';
+import { useIncidentById } from '../hooks/useIncidentById';
+import { NotFoundPage } from './NotFound';
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'medium',
@@ -8,64 +10,53 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 
 function initials(name: string): string {
   return name
-    .split(/\s+/)
-    .filter(Boolean)
+    .split(' ')
+    .filter((part) => part.length > 0)
     .slice(0, 2)
-    .map((part) => part[0]!.toUpperCase())
+    .map((part) => part.charAt(0).toUpperCase())
     .join('');
 }
 
+function IncidentDetailLoading() {
+  return (
+    <section className="panel" aria-busy="true" aria-live="polite">
+      <h2 className="incident-loading__title">Loading incident…</h2>
+      <div className="skeleton-stack">
+        <div className="skeleton-line skeleton-line--long" />
+        <div className="skeleton-line skeleton-line--medium" />
+        <div className="skeleton-line skeleton-line--short" />
+      </div>
+    </section>
+  );
+}
+
+function IncidentDetailError({ message }: { message: string }) {
+  return (
+    <section className="panel fetch-banner fetch-banner--error" role="alert">
+      <p>{message}</p>
+    </section>
+  );
+}
+
 export function IncidentDetailPage() {
-  const id = 'inc-1001';
-  const { incidents, isInitialLoading, isFetching, fetchError, refetch } = useIncidents();
+  const { id } = useParams();
 
-  if (isInitialLoading) {
-    return (
-      <section
-        className="panel incident-loading"
-        aria-label="Loading incident"
-        aria-busy="true"
-      >
-        <p className="incident-loading__title">Loading incident…</p>
-        <div className="skeleton-stack" aria-hidden>
-          <div className="skeleton-line skeleton-line--long" />
-          <div className="skeleton-line skeleton-line--medium" />
-          <div className="skeleton-line skeleton-line--short" />
-        </div>
-      </section>
-    );
+  if (!id) {
+    return <NotFoundPage />;
   }
 
-  if (fetchError !== null && incidents.length === 0) {
-    return (
-      <section className="panel incident-error" role="alert">
-        <h2 className="incident-error__title">Could not load incident</h2>
-        <p className="incident-error__message">{fetchError}</p>
-        <button
-          type="button"
-          className="incident-error__retry"
-          onClick={refetch}
-          disabled={isFetching}
-        >
-          Retry
-        </button>
-      </section>
-    );
+  const { incident, isLoading, error } = useIncidentById(id);
+
+  if (isLoading) {
+    return <IncidentDetailLoading />;
   }
 
-  const incident = incidents.find((entry) => entry.id === id);
+  if (error) {
+    return <IncidentDetailError message={error} />;
+  }
 
   if (!incident) {
-    return (
-      <section className="panel incident-detail incident-detail--missing">
-        <p className="eyebrow">Not found</p>
-        <h2 className="incident-detail__title">No incident with id {id}</h2>
-        <p className="incident-detail__description">
-          The preview id does not exist in the current data set. Pick another id from{' '}
-          <code>incidents.json</code>.
-        </p>
-      </section>
-    );
+    return <NotFoundPage />;
   }
 
   return <IncidentDetailView incident={incident} />;
@@ -76,27 +67,26 @@ interface IncidentDetailViewProps {
 }
 
 function IncidentDetailView({ incident }: IncidentDetailViewProps) {
-  const { id, title, description, severity, status, assignee, createdAt, updatedAt, tags } =
-    incident;
+  const { assignee, tags } = incident;
 
   return (
     <article
-      className={`panel incident-detail incident-detail--${severity}`}
+      className={`panel incident-detail incident-detail--${incident.severity}`}
       aria-labelledby="incident-detail-title"
     >
       <header className="incident-detail__header">
-        <p className="eyebrow">Incident · {id}</p>
+        <p className="eyebrow">Incident · {incident.id}</p>
         <h2 id="incident-detail-title" className="incident-detail__title">
-          {title}
+          {incident.title}
         </h2>
 
         <div className="badge-row">
-          <span className={`badge badge--${severity}`}>{severity}</span>
-          <span className={`badge badge--${status}`}>{status}</span>
+          <span className={`badge badge--${incident.severity}`}>{incident.severity}</span>
+          <span className={`badge badge--${incident.status}`}>{incident.status}</span>
         </div>
       </header>
 
-      <p className="incident-detail__description">{description}</p>
+      <p className="incident-detail__description">{incident.description}</p>
 
       <dl className="incident-detail__meta-grid">
         <div className="meta-tile">
@@ -132,14 +122,18 @@ function IncidentDetailView({ incident }: IncidentDetailViewProps) {
         <div className="meta-tile">
           <dt className="meta-tile__label">Created</dt>
           <dd className="meta-tile__value">
-            <time dateTime={createdAt}>{dateFormatter.format(new Date(createdAt))}</time>
+            <time dateTime={incident.createdAt}>
+              {dateFormatter.format(new Date(incident.createdAt))}
+            </time>
           </dd>
         </div>
 
         <div className="meta-tile">
           <dt className="meta-tile__label">Updated</dt>
           <dd className="meta-tile__value">
-            <time dateTime={updatedAt}>{dateFormatter.format(new Date(updatedAt))}</time>
+            <time dateTime={incident.updatedAt}>
+              {dateFormatter.format(new Date(incident.updatedAt))}
+            </time>
           </dd>
         </div>
       </dl>
