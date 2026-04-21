@@ -3,129 +3,138 @@ import type { Incident } from '../data/incidents';
 
 const INCIDENTS_URL = '/api/incidents';
 
+/** Async state as a discriminated union: check `kind`, then TypeScript knows the other fields. */
+export type AsyncState<T> =
+  | { kind: 'idle' }
+  | { kind: 'loading'; staleData?: T }
+  | { kind: 'success'; data: T }
+  | { kind: 'error'; error: string; staleData?: T };
+
 function isIncidentArray(value: unknown): value is Incident[] {
   return Array.isArray(value);
 }
 
-async function parseIncidentsResponse(res: Response): Promise<Incident[]> {
+function readHttpErrorMessage(res: Response): Promise<string> {
+  return res
+    .json()
+    .then((body) => {
+      if (body && typeof body === 'object' && 'message' in body) {
+        const m = (body as { message?: unknown }).message;
+        if (typeof m === 'string' && m.trim()) return m;
+      }
+      return `Request failed (${res.status}).`;
+    })
+    .catch(() => `Request failed (${res.status}).`);
+}
+
+function parseIncidentsFromResponse(res: Response): Promise<Incident[]> {
   const contentType = res.headers.get('content-type') ?? '';
-  const raw =
-    contentType.includes('application/json') ? await res.json() : await res.text();
+  const rawPromise = contentType.includes('application/json') ? res.json() : res.text();
 
-  if (!isIncidentArray(raw)) {
-    throw new Error('Unexpected response shape from /api/incidents.');
+  return rawPromise.then((raw) => {
+    if (!isIncidentArray(raw)) {
+      throw new Error('Unexpected response shape from /api/incidents.');
+    }
+    return raw;
+  });
+}
+
+function incidentsList(state: AsyncState<Incident[]>): Incident[] {
+  switch (state.kind) {
+    case 'success':
+      return state.data;
+    case 'loading':
+      return state.staleData ?? [];
+    case 'error':
+      return state.staleData ?? [];
+    case 'idle':
+      return [];
+    default: {
+      const _never: never = state;
+      return _never;
+    }
   }
+}
 
-  return raw;
+function nextLoadingState(prev: AsyncState<Incident[]>): AsyncState<Incident[]> {
+  if (prev.kind === 'success') {
+    return { kind: 'loading', staleData: prev.data };
+  }
+  if (prev.kind === 'error' && prev.staleData !== undefined) {
+    return { kind: 'loading', staleData: prev.staleData };
+  }
+  if (prev.kind === 'loading') {
+    return prev;
+  }
+  return { kind: 'loading' };
 }
 
 export interface UseIncidentsResult {
-  /** Last successfully loaded list (empty array before first success). */
+  state: AsyncState<Incident[]>;
   incidents: Incident[];
-  /** First load: no data yet and a request is in flight. */
   isInitialLoading: boolean;
-  /** Any request in flight (initial load, retry, or manual refresh). */
   isFetching: boolean;
   fetchError: string | null;
-  /** Re-run fetch (retry after error or manual refresh). Uses the same effect path as mount. */
   refetch: () => void;
 }
 
-/**
- * Loads incidents from the mock API with explicit loading / error handling and AbortController cleanup.
- *
- * Stretch: we keep showing the last successful list while a retry or refresh is in flight so the UI
- * stays usable; the error banner and `isFetching` communicate that data may be stale.
- *
- * Expert note — TanStack Query / SWR would centralize this pattern: cached `data`, `error`,
- * `isLoading` vs `isFetching`, deduped requests, `staleTime`, background refetch, and built-in
- * focus/reconnect refetch — without hand-rolling a version counter + effect for each resource.
- *
- * Why not fetch in render? Calling `fetch` directly during render kicks off a side effect during
- * render (network I/O), repeats on every render unless guarded, and updates async without a clear
- * cancellation story — leading to race conditions, inconsistent UI, and warnings if state updates
- * fire after unmount.
- */
+/** Loads incidents from `/api/incidents` with loading and error states. */
 export function useIncidents(): UseIncidentsResult {
-  const [data, setData] = useState<Incident[] | null>(null);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [isFetching, setIsFetching] = useState(false);
-  const [requestEpoch, setRequestEpoch] = useState(0);
+  const [state, setState] = useState<AsyncState<Incident[]>>({ kind: 'idle' });
+  const [loadKey, setLoadKey] = useState(0);
 
   const refetch = useCallback(() => {
-    setRequestEpoch((n) => n + 1);
+    setLoadKey((k) => k + 1);
   }, []);
 
   useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
+    let ignore = false;
 
-    void (async () => {
-      setIsFetching(true);
-      setFetchError(null);
+    setState((prev) => nextLoadingState(prev));
 
-      try {
-        const res = await fetch(INCIDENTS_URL, { signal });
-
-        if (!res.ok) {
-          let message = `Request failed (${res.status}).`;
-          try {
-            const errBody = await res.json();
-            if (errBody && typeof errBody === 'object' && 'message' in errBody) {
-              const m = (errBody as { message?: unknown }).message;
-              if (typeof m === 'string' && m.trim()) {
-                message = m;
-              }
-            }
-          } catch {
-            /* non-JSON error body */
-          }
-
-          if (import.meta.env.DEV) {
-            console.error('[useIncidents]', res.status, message);
-          }
-
-          if (!signal.aborted) {
-            setFetchError(message);
-          }
-          return;
+    fetch(INCIDENTS_URL)
+      .then((res) => {
+        if (res.ok) {
+          return res;
         }
-
-        const incidents = await parseIncidentsResponse(res);
-
-        if (!signal.aborted) {
-          setData(incidents);
-        }
-      } catch (err) {
-        if (signal.aborted || (err instanceof DOMException && err.name === 'AbortError')) {
-          return;
-        }
-
-        const message = err instanceof Error ? err.message : 'Unknown error while loading incidents.';
+        return readHttpErrorMessage(res).then((message) => {
+          throw new Error(message);
+        });
+      })
+      .then((res) => parseIncidentsFromResponse(res))
+      .then((data) => {
+        if (ignore) return;
+        setState({ kind: 'success', data });
+      })
+      .catch((err) => {
+        if (ignore) return;
         if (import.meta.env.DEV) {
           console.error('[useIncidents]', err);
         }
+        const message =
+          err instanceof Error ? err.message : 'Unknown error while loading incidents.';
+        setState((prev) => {
+          if (prev.kind !== 'loading') {
+            return prev;
+          }
+          if (prev.staleData !== undefined) {
+            return { kind: 'error', error: message, staleData: prev.staleData };
+          }
+          return { kind: 'error', error: message };
+        });
+      });
 
-        if (!signal.aborted) {
-          setFetchError(message);
-        }
-      } finally {
-        if (!signal.aborted) {
-          setIsFetching(false);
-        }
-      }
-    })();
-
-    return () => controller.abort();
-  }, [requestEpoch]);
-
-  const isInitialLoading = isFetching && data === null;
+    return () => {
+      ignore = true;
+    };
+  }, [loadKey]);
 
   return {
-    incidents: data ?? [],
-    isInitialLoading,
-    isFetching,
-    fetchError,
+    state,
     refetch,
+    incidents: incidentsList(state),
+    isInitialLoading: state.kind === 'loading' && state.staleData === undefined,
+    isFetching: state.kind === 'loading',
+    fetchError: state.kind === 'error' ? state.error : null,
   };
 }
