@@ -145,6 +145,33 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filters__refresh {
+  border: 1px solid var(--stroke);
+  background: var(--surface);
+  color: var(--brand-strong);
+  border-radius: 12px;
+  padding: 0.45rem 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filters__refresh:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.filters__fetching {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 .filters__count {
@@ -246,6 +273,98 @@ code {
 .empty-state {
   padding: 1rem 0;
   color: var(--muted);
+}
+
+.incident-loading__title,
+.incident-error__title {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+}
+
+.incident-error__message {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+
+.incident-error__retry,
+.fetch-banner__retry {
+  border: none;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.incident-error__retry:disabled,
+.fetch-banner__retry:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.fetch-banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--stroke);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.fetch-banner p {
+  margin: 0;
+  color: var(--critical);
+  font-weight: 600;
+}
+
+.fetch-banner--error {
+  border-color: rgba(180, 35, 24, 0.35);
+  background: rgba(180, 35, 24, 0.06);
+}
+
+.skeleton-stack {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.skeleton-line {
+  height: 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.06) 0%,
+    rgba(15, 23, 42, 0.12) 50%,
+    rgba(15, 23, 42, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+.skeleton-line--long {
+  width: 100%;
+}
+
+.skeleton-line--medium {
+  width: 72%;
+}
+
+.skeleton-line--short {
+  width: 44%;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .todo-note {
