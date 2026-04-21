@@ -6,34 +6,34 @@ import { SeverityFilter } from './components/SeverityFilter';
 import { useIncidents } from './hooks/useIncidents';
 import { filterIncidents } from './lib/filterIncidents';
 import type { Severity } from './data/incidents';
+import { IncidentDetailPage } from './pages/IncidentDetail';
 
 export function App() {
-  const { incidents, isInitialLoading, isFetching, fetchError, refetch } = useIncidents();
-  const [search, setSearch] = useState('');
-  const [severity, setSeverity] = useState<Severity | 'all'>('all');
+  // const { incidents, isInitialLoading, isFetching, fetchError, refetch } = useIncidents();
+  // const [search, setSearch] = useState('');
+  // const [severity, setSeverity] = useState<Severity | 'all'>('all');
 
-  const visible = useMemo(
-    () => filterIncidents(incidents, { search, severity }),
-    [incidents, search, severity],
-  );
+  // const visible = filterIncidents(incidents, { search, severity });
 
-  const hasActiveFilters = search !== '' || severity !== 'all';
+  // const hasActiveFilters = search !== '' || severity !== 'all';
 
-  const clearFilters = () => {
-    setSearch('');
-    setSeverity('all');
-  };
+  // const clearFilters = () => {
+  //   setSearch('');
+  //   setSeverity('all');
+  // };
 
-  const total = incidents.length;
-  const showList =
-    !isInitialLoading && (total > 0 || fetchError === null);
-  const showErrorWithoutList = fetchError !== null && total === 0 && !isFetching;
+  // const total = incidents.length;
+  // const showList =
+  //   !isInitialLoading && (total > 0 || fetchError === null);
+  // const showErrorWithoutList = fetchError !== null && total === 0 && !isFetching;
 
   return (
     <main className="app-shell">
       <Header />
 
-      <section className="panel filters" aria-label="Filters">
+      <IncidentDetailPage />
+
+      {/* <section className="panel filters" aria-label="Filters">
         <div className="filters__controls">
           <SearchBar value={search} onChange={setSearch} />
           <SeverityFilter value={severity} onChange={setSeverity} />
@@ -107,7 +107,7 @@ export function App() {
         </section>
       ) : null}
 
-      {showList ? <IncidentList incidents={visible} /> : null}
+      {showList ? <IncidentList incidents={visible} /> : null} */}
     </main>
   );
 }

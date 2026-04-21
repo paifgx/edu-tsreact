@@ -94,7 +94,7 @@ export function useIncidents(): UseIncidentsResult {
 
     fetch(INCIDENTS_URL)
       .then((res) => {
-        if (res.ok) {
+        if (res.status >= 200 && res.status < 300) {
           return res;
         }
         return readHttpErrorMessage(res).then((message) => {
