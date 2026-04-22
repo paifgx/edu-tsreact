@@ -1,6 +1,10 @@
+import { useState, type ChangeEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
+import { useUser } from '../context/UserContext';
 import { useIncidentById } from '../hooks/useIncidentById';
+import { useIncidents } from '../hooks/useIncidents';
+import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 import { NotFoundPage } from './NotFound';
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
@@ -40,11 +44,17 @@ function IncidentDetailError({ message }: { message: string }) {
 
 export function IncidentDetailPage() {
   const { id } = useParams();
-  const { incident, isLoading, error } = useIncidentById(id);
 
   if (!id) {
     return <NotFoundPage />;
   }
+
+  return <IncidentDetailPageContent id={id} />;
+}
+
+function IncidentDetailPageContent({ id }: { id: string }) {
+  const { upsertIncident } = useIncidents();
+  const { incident, isLoading, error, refetch } = useIncidentById(id);
 
   if (isLoading) {
     return <IncidentDetailLoading />;
@@ -58,15 +68,54 @@ export function IncidentDetailPage() {
     return <NotFoundPage />;
   }
 
-  return <IncidentDetailView incident={incident} />;
+  return (
+    <IncidentDetailView
+      incident={incident}
+      onAssigneeSaved={(updated) => {
+        upsertIncident(updated);
+        refetch();
+      }}
+    />
+  );
 }
 
 interface IncidentDetailViewProps {
   incident: Incident;
+  onAssigneeSaved: (incident: Incident) => void;
 }
 
-function IncidentDetailView({ incident }: IncidentDetailViewProps) {
+function IncidentDetailView({ incident, onAssigneeSaved }: IncidentDetailViewProps) {
+  const { users } = useUser();
   const { assignee, tags } = incident;
+  const [assigneeError, setAssigneeError] = useState<string | null>(null);
+  const [assigneeSaving, setAssigneeSaving] = useState(false);
+
+  async function handleAssigneeChange(event: ChangeEvent<HTMLSelectElement>) {
+    const nextId = event.target.value;
+    setAssigneeSaving(true);
+    setAssigneeError(null);
+    try {
+      const response = await fetch(`/api/incidents/${incident.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          assigneeId: nextId === '' ? null : nextId,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(await readHttpErrorMessage(response));
+      }
+      const updated: Incident = await response.json();
+      onAssigneeSaved(updated);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Could not update assignee.';
+      setAssigneeError(message);
+      event.target.value = incident.assignee?.id ?? '';
+    } finally {
+      setAssigneeSaving(false);
+    }
+  }
 
   return (
     <article
@@ -110,6 +159,28 @@ function IncidentDetailView({ incident }: IncidentDetailViewProps) {
             ) : (
               <span className="meta-tile__muted">Unassigned</span>
             )}
+            <label className="incident-detail__assignee-field">
+              <span className="control__label">Change assignee</span>
+              <select
+                className="control__input"
+                value={assignee?.id ?? ''}
+                disabled={assigneeSaving}
+                aria-busy={assigneeSaving}
+                onChange={handleAssigneeChange}
+              >
+                <option value="">Unassigned</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name} ({user.team})
+                  </option>
+                ))}
+              </select>
+            </label>
+            {assigneeError ? (
+              <p className="incident-form__error" role="alert">
+                {assigneeError}
+              </p>
+            ) : null}
           </dd>
         </div>
 

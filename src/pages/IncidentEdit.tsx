@@ -26,11 +26,16 @@ function IncidentEditError({ message }: { message: string }) {
 
 export function IncidentEditPage() {
   const { id } = useParams();
-  const { incident, isLoading, error } = useIncidentById(id);
 
   if (!id) {
     return <NotFoundPage />;
   }
+
+  return <IncidentEditPageContent id={id} />;
+}
+
+function IncidentEditPageContent({ id }: { id: string }) {
+  const { incident, isLoading, error } = useIncidentById(id);
 
   if (isLoading) {
     return <IncidentEditLoading />;

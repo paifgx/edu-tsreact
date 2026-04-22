@@ -1,6 +1,11 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { IncidentList } from '../components/IncidentList';
+import { IncidentListFilters } from '../components/IncidentListFilters';
+import { useUser } from '../context/UserContext';
 import { useIncidents } from '../hooks/useIncidents';
+import { useIncidentFilters } from '../hooks/useIncidentFilters';
+import { applyIncidentFilters } from '../lib/incidentFilters';
 
 function IncidentListLoading() {
   return (
@@ -33,6 +38,25 @@ function IncidentListError({ message, onRetry }: IncidentListErrorProps) {
 
 export function IncidentListPage() {
   const { state, refetch } = useIncidents();
+  const {
+    filters,
+    update,
+    reset,
+    toggleStatus,
+    toggleSeverity,
+    assigneeUnassignedValue,
+  } = useIncidentFilters();
+  const { users } = useUser();
+
+  const filteredIncidents = useMemo(() => {
+    if (state.status !== 'success') return [];
+    return applyIncidentFilters(state.data, filters);
+  }, [state, filters]);
+
+  const hasActiveFilters =
+    filters.statuses.length > 0 ||
+    filters.severities.length > 0 ||
+    filters.assigneeUserId !== null;
 
   if (state.status === 'loading') {
     return <IncidentListLoading />;
@@ -48,7 +72,7 @@ export function IncidentListPage() {
         <div>
           <p className="eyebrow">Incidents</p>
           <h2 className="section-header__title">
-            All incidents ({state.data.length})
+            All incidents ({filteredIncidents.length} of {state.data.length})
           </h2>
         </div>
         <Link to="/incidents/new" className="button">
@@ -56,7 +80,22 @@ export function IncidentListPage() {
         </Link>
       </header>
 
-      <IncidentList incidents={state.data} />
+      <IncidentListFilters
+        filters={filters}
+        assigneeUnassignedToken={assigneeUnassignedValue}
+        users={users}
+        toggleStatus={toggleStatus}
+        toggleSeverity={toggleSeverity}
+        onAssigneeFilterChange={(assigneeUserId) =>
+          update({ assigneeUserId })
+        }
+        filteredCount={filteredIncidents.length}
+        totalCount={state.data.length}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={reset}
+      />
+
+      <IncidentList incidents={filteredIncidents} />
     </>
   );
 }

@@ -9,6 +9,7 @@ import { IncidentEditPage } from './pages/IncidentEdit';
 import { IncidentNewPage } from './pages/IncidentNew';
 import { ThemeProvider } from './context/ThemeContext';
 import { UserProvider } from './context/UserContext';
+import { IncidentsProvider } from './hooks/useIncidents';
 
 function AppShell() {
   return (
@@ -49,20 +50,22 @@ export function App() {
   return (
     <UserProvider>
       <ThemeProvider>
-        <Routes>
-          <Route path="/" element={<AppShell />}>
-            <Route index element={<Dashboard />} />
-            <Route path="incidents" element={<IncidentListPage />} />
-            <Route path="incidents/new" element={<IncidentNewPage />} />
-            <Route path="incidents/:id" element={<IncidentDetailPage />} />
-            <Route path="incidents/:id/edit" element={<IncidentEditPage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
+        <IncidentsProvider>
+          <Routes>
+            <Route path="/" element={<AppShell />}>
+              <Route index element={<Dashboard />} />
+              <Route path="incidents" element={<IncidentListPage />} />
+              <Route path="incidents/new" element={<IncidentNewPage />} />
+              <Route path="incidents/:id" element={<IncidentDetailPage />} />
+              <Route path="incidents/:id/edit" element={<IncidentEditPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route>
 
-          <Route path="/" element={<AppShell2 />}>
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
+            <Route path="/" element={<AppShell2 />}>
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
+          </Routes>
+        </IncidentsProvider>
       </ThemeProvider>
     </UserProvider>
   );

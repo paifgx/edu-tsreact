@@ -7,6 +7,7 @@ import {
   type Severity,
   type Status,
 } from '../data/incidents';
+import { useIncidents } from '../hooks/useIncidents';
 import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 
 export type IncidentFormProps =
@@ -53,6 +54,7 @@ function initialValues(props: IncidentFormProps): FormValues {
 
 export function IncidentForm(props: IncidentFormProps) {
   const navigate = useNavigate();
+  const { refetch: refetchIncidents } = useIncidents();
   const isEdit = props.mode === 'edit';
 
   const [values, setValues] = useState<FormValues>(() => initialValues(props));
@@ -91,6 +93,7 @@ export function IncidentForm(props: IncidentFormProps) {
         if (!response.ok) {
           throw new Error(await readHttpErrorMessage(response));
         }
+        refetchIncidents();
         // After a successful save, always go to the detail page (same for create and edit).
         navigate(`/incidents/${props.incidentId}`);
       } else {
@@ -103,6 +106,7 @@ export function IncidentForm(props: IncidentFormProps) {
           throw new Error(await readHttpErrorMessage(response));
         }
         const created: Incident = await response.json();
+        refetchIncidents();
         navigate(`/incidents/${created.id}`);
       }
     } catch (err) {

@@ -34,5 +34,13 @@ export default [
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
+  {
+    files: ['src/hooks/**/*.{ts,tsx}', 'src/context/**/*.{ts,tsx}'],
+    rules: {
+      // Recommended in eslint-plugin-react-hooks v7, but it rejects common fetch
+      // patterns (reset + load in one effect). Keep hooks exhaustive otherwise.
+      'react-hooks/set-state-in-effect': 'off',
+    },
+  },
 ];
 
