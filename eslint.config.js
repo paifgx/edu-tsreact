@@ -42,5 +42,14 @@ export default [
       'react-hooks/set-state-in-effect': 'off',
     },
   },
+  {
+    files: ['**/*.{test,spec}.{ts,tsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.vitest,
+      },
+    },
+  },
 ];
 
