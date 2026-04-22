@@ -6,6 +6,7 @@ import { NotFoundPage } from './pages/NotFound';
 import { IncidentListPage } from './pages/IncidentList';
 import { SettingsPage } from './pages/Settings';
 import { IncidentEditPage } from './pages/IncidentEdit';
+import { IncidentNewPage } from './pages/IncidentNew';
 import { ThemeProvider } from './context/ThemeContext';
 
 function AppShell() {
@@ -49,6 +50,7 @@ export function App() {
         <Route path="/" element={<AppShell />}>
           <Route index element={<Dashboard />} />
           <Route path="incidents" element={<IncidentListPage />} />
+          <Route path="incidents/new" element={<IncidentNewPage />} />
           <Route path="incidents/:id" element={<IncidentDetailPage />} />
           <Route path="incidents/:id/edit" element={<IncidentEditPage />} />
           <Route path="settings" element={<SettingsPage />} />

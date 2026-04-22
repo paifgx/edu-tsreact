@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
 import { useIncidentById } from '../hooks/useIncidentById';
 import { NotFoundPage } from './NotFound';
@@ -40,12 +40,11 @@ function IncidentDetailError({ message }: { message: string }) {
 
 export function IncidentDetailPage() {
   const { id } = useParams();
+  const { incident, isLoading, error } = useIncidentById(id);
 
   if (!id) {
     return <NotFoundPage />;
   }
-
-  const { incident, isLoading, error } = useIncidentById(id);
 
   if (isLoading) {
     return <IncidentDetailLoading />;
@@ -84,6 +83,12 @@ function IncidentDetailView({ incident }: IncidentDetailViewProps) {
           <span className={`badge badge--${incident.severity}`}>{incident.severity}</span>
           <span className={`badge badge--${incident.status}`}>{incident.status}</span>
         </div>
+
+        <p className="incident-detail__actions">
+          <Link to={`/incidents/${incident.id}/edit`} className="button button--secondary">
+            Edit
+          </Link>
+        </p>
       </header>
 
       <p className="incident-detail__description">{incident.description}</p>

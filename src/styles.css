@@ -409,6 +409,14 @@ code {
   letter-spacing: -0.01em;
 }
 
+.section-header--with-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .incident-form {
   display: grid;
   gap: 1rem;
@@ -704,6 +712,13 @@ code {
   color: var(--ink);
 }
 
+.control__hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .filters {
   margin-bottom: 1.5rem;
   display: grid;
@@ -987,6 +1002,10 @@ code {
 .incident-detail__header {
   display: grid;
   gap: 0.65rem;
+}
+
+.incident-detail__actions {
+  margin: 0.15rem 0 0;
 }
 
 .incident-detail__title {

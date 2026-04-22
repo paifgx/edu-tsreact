@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { IncidentList } from '../components/IncidentList';
 import { useIncidents } from '../hooks/useIncidents';
 
@@ -43,9 +44,14 @@ export function IncidentListPage() {
 
   return (
     <>
-      <header className="section-header">
-        <p className="eyebrow">Incidents</p>
-        <h2 className="section-header__title">All incidents ({incidents.length})</h2>
+      <header className="section-header section-header--with-action">
+        <div>
+          <p className="eyebrow">Incidents</p>
+          <h2 className="section-header__title">All incidents ({incidents.length})</h2>
+        </div>
+        <Link to="/incidents/new" className="button">
+          New incident
+        </Link>
       </header>
 
       <IncidentList incidents={incidents} />

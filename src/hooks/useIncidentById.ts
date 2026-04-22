@@ -8,14 +8,21 @@ export interface UseIncidentByIdResult {
   error: string | null;
 }
 
-/** Loads a single incident from `/api/incidents/:id`. */
-export function useIncidentById(id: string): UseIncidentByIdResult {
+/** Loads a single incident from `/api/incidents/:id`. No request if `id` is missing. */
+export function useIncidentById(id: string | undefined): UseIncidentByIdResult {
   const [incident, setIncident] = useState<Incident | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(id));
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+
+    if (!id) {
+      setIncident(null);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
