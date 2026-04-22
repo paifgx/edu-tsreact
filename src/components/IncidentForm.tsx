@@ -7,6 +7,7 @@ import {
   type Severity,
   type Status,
 } from '../data/incidents';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useIncidents } from '../hooks/useIncidents';
 import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 
@@ -61,6 +62,7 @@ export function IncidentForm(props: IncidentFormProps) {
   const [titleError, setTitleError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -127,7 +129,9 @@ export function IncidentForm(props: IncidentFormProps) {
     <section className="panel" aria-labelledby={headingId}>
       <header>
         <p className="eyebrow">{eyebrow}</p>
-        <h2 id={headingId}>{displayTitle}</h2>
+        <h2 id={headingId} ref={headingRef} tabIndex={-1}>
+          {displayTitle}
+        </h2>
       </header>
 
       <form onSubmit={onSubmit} className="incident-form" noValidate>

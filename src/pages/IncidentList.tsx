@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { IncidentList } from '../components/IncidentList';
 import { IncidentListFilters } from '../components/IncidentListFilters';
 import { useUser } from '../context/UserContext';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useIncidents } from '../hooks/useIncidents';
 import { useIncidentFilters } from '../hooks/useIncidentFilters';
 import { applyIncidentFilters } from '../lib/incidentFilters';
@@ -47,6 +48,7 @@ export function IncidentListPage() {
     assigneeUnassignedValue,
   } = useIncidentFilters();
   const { users } = useUser();
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   const filteredIncidents = useMemo(() => {
     if (state.status !== 'success') return [];
@@ -71,7 +73,11 @@ export function IncidentListPage() {
       <header className="section-header section-header--with-action">
         <div>
           <p className="eyebrow">Incidents</p>
-          <h2 className="section-header__title">
+          <h2
+            ref={headingRef}
+            tabIndex={-1}
+            className="section-header__title"
+          >
             All incidents ({filteredIncidents.length} of {state.data.length})
           </h2>
         </div>

@@ -2,6 +2,7 @@ import { useState, type ChangeEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
 import { useUser } from '../context/UserContext';
+import { useFocusOnMount } from '../hooks/useFocusOnMount';
 import { useIncidentById } from '../hooks/useIncidentById';
 import { useIncidents } from '../hooks/useIncidents';
 import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
@@ -89,6 +90,7 @@ function IncidentDetailView({ incident, onAssigneeSaved }: IncidentDetailViewPro
   const { assignee, tags } = incident;
   const [assigneeError, setAssigneeError] = useState<string | null>(null);
   const [assigneeSaving, setAssigneeSaving] = useState(false);
+  const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
   async function handleAssigneeChange(event: ChangeEvent<HTMLSelectElement>) {
     const nextId = event.target.value;
@@ -124,7 +126,12 @@ function IncidentDetailView({ incident, onAssigneeSaved }: IncidentDetailViewPro
     >
       <header className="incident-detail__header">
         <p className="eyebrow">Incident · {incident.id}</p>
-        <h2 id="incident-detail-title" className="incident-detail__title">
+        <h2
+          id="incident-detail-title"
+          ref={headingRef}
+          tabIndex={-1}
+          className="incident-detail__title"
+        >
           {incident.title}
         </h2>
 

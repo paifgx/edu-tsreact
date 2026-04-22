@@ -1245,3 +1245,59 @@ code {
     border-radius: 12px;
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/* Accessibility helpers                                                      */
+/* -------------------------------------------------------------------------- */
+
+/* Skip link: visible only when focused, so keyboard users can jump past the
+   site header to the main landmark on every page. */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 1000;
+  padding: 0.5rem 0.9rem;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--stroke);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  transform: translateY(-150%);
+  transition: transform 120ms ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* The <main> landmark can receive programmatic focus via tabIndex={-1};
+   hide the default focus ring since it carries no semantic value for mouse
+   or keyboard users (route changes move focus here invisibly). */
+main:focus {
+  outline: none;
+}
+
+/* Keep the focus ring on interactive elements visible and consistent. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Respect the user's motion preference. We still allow opacity/color
+   transitions implicitly, but skip transforms and keyframe animations that
+   can trigger vestibular issues. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

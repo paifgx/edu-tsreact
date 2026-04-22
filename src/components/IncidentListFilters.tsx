@@ -97,7 +97,7 @@ export function IncidentListFilters({
       </div>
 
       <div className="filters__meta">
-        <p className="filters__count">
+        <p className="filters__count" aria-live="polite" aria-atomic="true">
           Showing {filteredCount} of {totalCount} incidents
         </p>
         <div className="filters__actions">
