@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useUser } from "../context/UserContext";
 
 type NavLinkState = { isActive: boolean };
 
@@ -10,6 +11,7 @@ const navLinkClass = ({ isActive }: NavLinkState) =>
 
 export function Header() {
   const { appearance, toggleAppearance } = useTheme();
+  const { currentUser, isLoadingUsers } = useUser();
 
   return (
     <header className="page-header">
@@ -18,6 +20,13 @@ export function Header() {
         <h1 className="page-header__title">Incident Dashboard</h1>
         <p className="page-header__subtitle">
           Incident Dashboard for internal use.
+        </p>
+        <p className="page-header__user-line">
+          {isLoadingUsers
+            ? "Loading workspace user…"
+            : currentUser
+              ? `Workspace user: ${currentUser.name} (${currentUser.team})`
+              : "No workspace user selected — pick one in Settings."}
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import type { Density, Palette } from "../context/ThemeContext";
 import { useTheme } from "../context/ThemeContext";
+import { useUser } from "../context/UserContext";
 
 type PaletteOption = {
   id: Palette;
@@ -43,11 +44,56 @@ export function SettingsPage() {
     density,
     setDensity,
   } = useTheme();
+  const { users, isLoadingUsers, currentUser, setCurrentUserId } = useUser();
 
   return (
     <section className="panel">
       <h3>Settings</h3>
       <p>Profile and other personalization options can live here.</p>
+
+      <div className="settings-block">
+        <div className="settings-block__head">
+          <h4 className="settings-block__title">Workspace user</h4>
+          <span className="settings-block__badge settings-block__badge--muted">
+            {isLoadingUsers
+              ? "…"
+              : currentUser
+                ? currentUser.name
+                : "None"}
+          </span>
+        </div>
+        <p className="settings-block__hint">
+          UI-only choice for demos — not authentication. Same people as{" "}
+          <code>/api/users</code> when the mock API runs.
+        </p>
+        {isLoadingUsers ? (
+          <p className="settings-block__hint">Loading user list…</p>
+        ) : (
+          <label className="control">
+            <span className="control__label">Current user</span>
+            <select
+              className="control__input"
+              value={currentUser?.id ?? ""}
+              onChange={(e) => {
+                const v = e.target.value;
+                setCurrentUserId(v === "" ? null : v);
+              }}
+            >
+              <option value="">No user selected</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} — {u.email} ({u.team})
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        {!isLoadingUsers && !currentUser ? (
+          <p className="settings-block__fallback" role="status">
+            No user is set. The header shows a short fallback until you pick someone.
+          </p>
+        ) : null}
+      </div>
 
       <div className="settings-block">
         <div className="settings-block__head">

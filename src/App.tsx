@@ -8,6 +8,7 @@ import { SettingsPage } from './pages/Settings';
 import { IncidentEditPage } from './pages/IncidentEdit';
 import { IncidentNewPage } from './pages/IncidentNew';
 import { ThemeProvider } from './context/ThemeContext';
+import { UserProvider } from './context/UserContext';
 
 function AppShell() {
   return (
@@ -44,22 +45,25 @@ function AppShell2() {
 }
 
 export function App() {
+  /* Zwei Contexts: UserProvider außen, ThemeProvider innen (unabhängig; Reihenfolge = Konvention). */
   return (
-    <ThemeProvider>
-      <Routes>
-        <Route path="/" element={<AppShell />}>
-          <Route index element={<Dashboard />} />
-          <Route path="incidents" element={<IncidentListPage />} />
-          <Route path="incidents/new" element={<IncidentNewPage />} />
-          <Route path="incidents/:id" element={<IncidentDetailPage />} />
-          <Route path="incidents/:id/edit" element={<IncidentEditPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-        </Route>
+    <UserProvider>
+      <ThemeProvider>
+        <Routes>
+          <Route path="/" element={<AppShell />}>
+            <Route index element={<Dashboard />} />
+            <Route path="incidents" element={<IncidentListPage />} />
+            <Route path="incidents/new" element={<IncidentNewPage />} />
+            <Route path="incidents/:id" element={<IncidentDetailPage />} />
+            <Route path="incidents/:id/edit" element={<IncidentEditPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
 
-        <Route path="/" element={<AppShell2 />}>
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </ThemeProvider>
+          <Route path="/" element={<AppShell2 />}>
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </ThemeProvider>
+    </UserProvider>
   );
 }

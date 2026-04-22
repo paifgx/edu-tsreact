@@ -397,6 +397,13 @@ code {
   color: var(--muted);
 }
 
+.page-header__user-line {
+  margin: 0.45rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .section-header {
   margin: 0 0 1.25rem;
   padding: 0 0.25rem;
@@ -495,6 +502,16 @@ code {
 
 .settings-block__hint {
   margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.settings-block__fallback {
+  margin: 0.65rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 12px;
+  border: 1px dashed var(--stroke);
   font-size: 0.88rem;
   color: var(--muted);
   line-height: 1.45;
