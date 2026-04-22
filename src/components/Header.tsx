@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 type NavLinkState = { isActive: boolean };
 
@@ -8,6 +9,8 @@ const navLinkClass = ({ isActive }: NavLinkState) =>
     : "page-header__nav-link";
 
 export function Header() {
+  const { appearance, toggleAppearance } = useTheme();
+
   return (
     <header className="page-header">
       <div className="page-header__brand">
@@ -19,6 +22,15 @@ export function Header() {
       </div>
 
       <nav className="page-header__nav" aria-label="Primary">
+        <button
+          type="button"
+          className="page-header__theme-toggle"
+          onClick={toggleAppearance}
+          aria-pressed={appearance === "dark"}
+          aria-label="Toggle color theme"
+        >
+          Theme
+        </button>
         <ul className="page-header__nav-list">
           <li>
             <NavLink to="/" end className={navLinkClass}>
