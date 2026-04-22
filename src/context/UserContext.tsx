@@ -1,8 +1,8 @@
-/* @refresh reset — gleicher Grund wie ThemeContext: Provider + Hook in einer Datei. */
+/* @refresh reset — same reason as ThemeContext: provider + hook in one module. */
 /* eslint-disable react-refresh/only-export-components */
 /**
- * "Aktueller Nutzer" ist hier nur eine **UI-Auswahl** (z. B. für Demos), kein Login.
- * Echte Accounts kommen später vom Server — siehe Aufgaben-Notiz in tasks/06.
+ * "Current user" here is a **UI-only** pick (e.g. for demos), not authentication.
+ * Real accounts would come from the server later — see task notes in tasks/06.
  */
 
 import {
@@ -20,10 +20,10 @@ import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 const STORAGE_USER_ID = 'incident-dashboard-current-user-id';
 
 export type UserContextValue = {
-  /** Liste aus API, sonst Seed-Daten aus `data/users.json`. */
+  /** From `/api/users` when available, otherwise seed data from `data/users.json`. */
   users: User[];
   isLoadingUsers: boolean;
-  /** Ausgewählter Nutzer oder `null` = keiner gewählt (klarer Fallback in der UI). */
+  /** Selected user, or `null` if none — UI shows an explicit fallback. */
   currentUser: User | null;
   setCurrentUserId: (userId: string | null) => void;
 };
@@ -125,7 +125,7 @@ export function useUser(): UserContextValue {
   const ctx = useContext(UserContext);
   if (!ctx) {
     throw new Error(
-      'useUser: UserProvider fehlt — in App.tsx <UserProvider> um Router/Theme legen.',
+      'useUser must be used within a UserProvider — wrap the app in <UserProvider> in App.tsx.',
     );
   }
   return ctx;

@@ -31,8 +31,8 @@ const PALETTE_OPTIONS: PaletteOption[] = [
 ];
 
 const DENSITY_OPTIONS: { id: Density; label: string; hint: string }[] = [
-  { id: "comfortable", label: "Comfortable", hint: "Mehr Luft" },
-  { id: "compact", label: "Compact", hint: "Enger gepackt" },
+  { id: "comfortable", label: "Comfortable", hint: "More whitespace" },
+  { id: "compact", label: "Compact", hint: "Tighter layout" },
 ];
 
 export function SettingsPage() {

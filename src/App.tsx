@@ -30,7 +30,7 @@ function AppShell2() {
   return (
     <>
       <div className="app-shell">
-        <h1>Hallo Welt</h1>
+        <h1>Hello World</h1>
 
         <main>
           <Outlet />
@@ -45,7 +45,7 @@ function AppShell2() {
 }
 
 export function App() {
-  /* Zwei Contexts: UserProvider außen, ThemeProvider innen (unabhängig; Reihenfolge = Konvention). */
+  /* Two providers: UserProvider outside ThemeProvider (independent; order is a team convention). */
   return (
     <UserProvider>
       <ThemeProvider>

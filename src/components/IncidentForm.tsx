@@ -91,7 +91,7 @@ export function IncidentForm(props: IncidentFormProps) {
         if (!response.ok) {
           throw new Error(await readHttpErrorMessage(response));
         }
-        // Nach erfolgreichem Speichern immer die Detailseite — für „Neu“ und „Bearbeiten“ gleich.
+        // After a successful save, always go to the detail page (same for create and edit).
         navigate(`/incidents/${props.incidentId}`);
       } else {
         const response = await fetch('/api/incidents', {

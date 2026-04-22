@@ -1,7 +1,7 @@
-/* @refresh reset — Vite: kein Fast-Refresh-Konflikt (Provider + Hook in einer Datei). */
+/* @refresh reset — Vite: avoids Fast Refresh issues when a file exports both a provider and a hook. */
 /* eslint-disable react-refresh/only-export-components */
-// Einsteiger: Context, Provider und useTheme absichtlich hier zusammen (eine Datei lesen).
-// Drei getrennte Ideen: appearance (hell/dunkel), palette (Akzentfarben), density (Abstände).
+// Theme context, ThemeProvider, and useTheme live in one file for easier onboarding.
+// Three separate concerns: appearance (light/dark), palette (accent colors), density (spacing).
 
 import {
   createContext,
@@ -12,13 +12,13 @@ import {
   type ReactNode,
 } from 'react';
 
-/** Hell / Dunkel — steuert vor allem Hintergrund und Kontrast (siehe @media in styles.css). */
+/** Light / dark — mainly background and contrast (see @media rules in styles.css). */
 export type Appearance = 'light' | 'dark';
 
-/** Akzentfarbe — überschreibt nur Marken-Variablen (--brand, …), Rest bleibt gleich. */
+/** Accent palette — overrides brand CSS variables only; other tokens stay the same. */
 export type Palette = 'teal' | 'ocean' | 'ember';
 
-/** Etwas engere Abstände und kleinere Ecken — reine Layout-Anpassung. */
+/** Tighter spacing and slightly smaller radii — layout-only. */
 export type Density = 'comfortable' | 'compact';
 
 export type ThemeContextValue = {
@@ -38,7 +38,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 const STORAGE_APPEARANCE = 'incident-dashboard-appearance';
 const STORAGE_PALETTE = 'incident-dashboard-palette';
 const STORAGE_DENSITY = 'incident-dashboard-density';
-/** Alte Speicher-Form: nur hell/dunkel — wird einmalig ausgelesen, wenn die neuen Keys fehlen. */
+/** Legacy storage key (light/dark only) — read once when the newer keys are missing. */
 const STORAGE_LEGACY_THEME = 'incident-dashboard-theme';
 
 const PALETTES: Palette[] = ['teal', 'ocean', 'ember'];
@@ -76,7 +76,7 @@ function readDensity(): Density {
   return 'comfortable';
 }
 
-/** Setzt Klassen + data-Attribute auf document.documentElement (html) und speichert in localStorage. */
+/** Syncs classes + data attributes on `document.documentElement` and persists to localStorage. */
 function syncDocumentUi(appearance: Appearance, palette: Palette, density: Density) {
   const root = document.documentElement;
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -125,7 +125,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 export function useTheme(): ThemeContextValue {
   const value = useContext(ThemeContext);
   if (!value) {
-    throw new Error('useTheme: ThemeProvider fehlt oben in der Baumstruktur (z. B. in App.tsx).');
+    throw new Error(
+      'useTheme must be used within a ThemeProvider — wrap the app tree in App.tsx (e.g. inside UserProvider).',
+    );
   }
   return value;
 }

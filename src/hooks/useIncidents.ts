@@ -2,33 +2,39 @@ import { useCallback, useEffect, useState } from 'react';
 import type { Incident } from '../data/incidents';
 import { readHttpErrorMessage } from '../lib/readHttpErrorMessage';
 
-export interface UseIncidentsResult {
-  incidents: Incident[];
-  isLoading: boolean;
-  error: string | null;
-  refetch: () => void;
-}
+/**
+ * Discriminated load state — branch on `state.status` in the UI so TypeScript
+ * narrows (e.g. `state.data` exists only when status is `success`).
+ */
+export type UseIncidentsState =
+  | { status: 'loading' }
+  | { status: 'success'; data: Incident[] }
+  | { status: 'error'; message: string };
 
-/** Loads incidents from `/api/incidents`. */
+export type UseIncidentsResult = {
+  state: UseIncidentsState;
+  /** Reloads data; the previous in-flight request is aborted (no stale updates). */
+  refetch: () => void;
+};
+
+/** Fetches `/api/incidents` — keep list loading logic here, not in page components. */
 export function useIncidents(): UseIncidentsResult {
-  const [incidents, setIncidents] = useState<Incident[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<UseIncidentsState>({ status: 'loading' });
   const [refetchKey, setRefetchKey] = useState(0);
 
   const refetch = useCallback(() => {
+    setState({ status: 'loading' });
     setRefetchKey((key) => key + 1);
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-
-    setIsLoading(true);
-    setError(null);
+    const controller = new AbortController();
 
     async function load() {
       try {
-        const response = await fetch('/api/incidents');
+        const response = await fetch('/api/incidents', {
+          signal: controller.signal,
+        });
 
         if (!response.ok) {
           const message = await readHttpErrorMessage(response);
@@ -36,26 +42,23 @@ export function useIncidents(): UseIncidentsResult {
         }
 
         const data: Incident[] = await response.json();
-        if (cancelled) return;
-        setIncidents(data);
+        if (controller.signal.aborted) return;
+        setState({ status: 'success', data });
       } catch (err) {
-        if (cancelled) return;
+        if (controller.signal.aborted) return;
+        if (err instanceof DOMException && err.name === 'AbortError') return;
         const message =
           err instanceof Error ? err.message : 'Unknown error while loading incidents.';
-        setError(message);
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
+        setState({ status: 'error', message });
       }
     }
 
-    load();
+    void load();
 
     return () => {
-      cancelled = true;
+      controller.abort();
     };
   }, [refetchKey]);
 
-  return { incidents, isLoading, error, refetch };
+  return { state, refetch };
 }

@@ -32,14 +32,14 @@ function IncidentListError({ message, onRetry }: IncidentListErrorProps) {
 }
 
 export function IncidentListPage() {
-  const { incidents, isLoading, error, refetch } = useIncidents();
+  const { state, refetch } = useIncidents();
 
-  if (isLoading) {
+  if (state.status === 'loading') {
     return <IncidentListLoading />;
   }
 
-  if (error) {
-    return <IncidentListError message={error} onRetry={refetch} />;
+  if (state.status === 'error') {
+    return <IncidentListError message={state.message} onRetry={refetch} />;
   }
 
   return (
@@ -47,14 +47,16 @@ export function IncidentListPage() {
       <header className="section-header section-header--with-action">
         <div>
           <p className="eyebrow">Incidents</p>
-          <h2 className="section-header__title">All incidents ({incidents.length})</h2>
+          <h2 className="section-header__title">
+            All incidents ({state.data.length})
+          </h2>
         </div>
         <Link to="/incidents/new" className="button">
           New incident
         </Link>
       </header>
 
-      <IncidentList incidents={incidents} />
+      <IncidentList incidents={state.data} />
     </>
   );
 }
