@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
 
 export interface IncidentCardProps {
@@ -10,7 +11,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 });
 
 export function IncidentCard({ incident }: IncidentCardProps) {
-  const { title, description, severity, status, assignee, createdAt, tags } = incident;
+  const { id, title, description, severity, status, assignee, createdAt, tags } = incident;
 
   return (
     <article className="incident-card">
@@ -31,6 +32,10 @@ export function IncidentCard({ incident }: IncidentCardProps) {
         <time dateTime={createdAt}>{dateFormatter.format(new Date(createdAt))}</time>
         {assignee ? <> · {assignee.name} ({assignee.team})</> : <> · unassigned</>}
       </p>
+
+      <div className="incident-card__actions">
+        <Link to={`/incidents/${id}`} className="button">View Details</Link>
+      </div>
     </article>
   );
 }
