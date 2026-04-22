@@ -50,6 +50,10 @@ export function IncidentListPage() {
   const { users } = useUser();
   const headingRef = useFocusOnMount<HTMLHeadingElement>();
 
+  // Memoized because `applyIncidentFilters` walks the full incidents array and
+  // this page re-renders on every unrelated parent state change (theme toggle,
+  // user-context update, route transitions). The filter function itself runs
+  // only when the fetched data or the filter values change.
   const filteredIncidents = useMemo(() => {
     if (state.status !== 'success') return [];
     return applyIncidentFilters(state.data, filters);

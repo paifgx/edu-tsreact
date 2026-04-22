@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Incident } from '../data/incidents';
 
@@ -10,7 +11,12 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   timeStyle: 'short',
 });
 
-export function IncidentCard({ incident }: IncidentCardProps) {
+// Wrapped in `memo` because filter toggles re-render the list page and pass
+// the same `incident` reference for rows that did not change. The card is
+// pure and only depends on `incident`, so identity-based bail-out is correct.
+export const IncidentCard = memo(IncidentCardImpl);
+
+function IncidentCardImpl({ incident }: IncidentCardProps) {
   const { id, title, description, severity, status, assignee, createdAt, tags } = incident;
 
   return (
